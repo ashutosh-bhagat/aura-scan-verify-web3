@@ -67,10 +67,14 @@ export default {
 					'purple': '#8A2BE2',
 					'blue': '#4169E1',
 					'light': '#F0F8FF',
-					'dark': '#1a1a2e',
+					'dark': '#0f1123',
+					'darker': '#090b17',
+					'card': '#151836',
+					'card-border': '#252850',
 					'success': '#10B981',
 					'error': '#EF4444',
 					'warning': '#F59E0B',
+					'purple-accent': '#bf5af2',
 				}
 			},
 			borderRadius: {

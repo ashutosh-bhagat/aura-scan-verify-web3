@@ -6,8 +6,10 @@ import QRCodeScanner from '@/components/QRCodeScanner';
 import VerificationResult from '@/components/VerificationResult';
 import WalletCard from '@/components/WalletCard';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Wallet, Shield, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [isScanning, setIsScanning] = useState(false);
@@ -86,30 +88,86 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent to-background">
+    <div className="min-h-screen bg-[#0f1123] text-white">
       <Header />
       
-      <main className="container px-4 py-8 max-w-4xl mx-auto">
+      <main className="container px-4 py-8 max-w-6xl mx-auto">
         {!scannedAddress ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold gradient-text mb-2">
-                Aura Scan Verification
+            <div className="text-center mb-12 py-16">
+              <h1 className="text-5xl font-bold mb-6 text-gradient">
+                <span className="text-[#4169E1]">Decentralized</span> <span className="text-[#bf5af2]">Identity</span>
+                <br />
+                <span className="text-[#bf5af2]">Verification</span> <span className="text-[#4169E1]">Platform</span>
               </h1>
-              <p className="text-muted-foreground max-w-xl mx-auto">
-                Scan a QR code to verify wallet authorization status. Authorized users will see their account details.
+              <p className="text-gray-400 max-w-2xl mx-auto text-lg mb-8">
+                Secure, private, and blockchain-powered identity verification for 
+                the Web3 ecosystem.
               </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+                <Card className="bg-[#151836] border-[#252850] hover:border-[#4169E1] transition-colors">
+                  <CardContent className="p-6">
+                    <div className="h-12 w-12 bg-[#2a2d4a] rounded-xl flex items-center justify-center mb-4">
+                      <Wallet className="h-6 w-6 text-[#bf5af2]" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Connect Wallet</h3>
+                    <p className="text-gray-400 text-sm mb-6">
+                      Securely connect your Solana wallet to begin the verification process.
+                    </p>
+                    <Button className="bg-[#252850] hover:bg-[#303366] text-white">
+                      <Wallet className="h-4 w-4 mr-2" /> Connect
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-[#151836] border-[#252850] hover:border-[#4169E1] transition-colors">
+                  <CardContent className="p-6">
+                    <div className="h-12 w-12 bg-[#2a2d4a] rounded-xl flex items-center justify-center mb-4">
+                      <UserCheck className="h-6 w-6 text-[#4169E1]" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Verify Identity</h3>
+                    <p className="text-gray-400 text-sm mb-6">
+                      Submit your information and complete biometric verification.
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="bg-transparent border-[#4169E1] text-[#4169E1] hover:bg-[#4169E1] hover:text-white"
+                      onClick={() => setIsScanning(true)}
+                    >
+                      Start Verification <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-[#151836] border-[#252850] hover:border-[#4169E1] transition-colors">
+                  <CardContent className="p-6">
+                    <div className="h-12 w-12 bg-[#2a2d4a] rounded-xl flex items-center justify-center mb-4">
+                      <Shield className="h-6 w-6 text-[#10B981]" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Access Dashboard</h3>
+                    <p className="text-gray-400 text-sm mb-6">
+                      View your verification status and manage your digital identity.
+                    </p>
+                    <Button variant="outline" className="bg-transparent border-[#10B981] text-[#10B981] hover:bg-[#10B981] hover:text-white">
+                      Go to Dashboard <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
             
-            <QRCodeScanner 
-              onScanSuccess={handleScanSuccess}
-              isScanning={isScanning}
-              setIsScanning={setIsScanning}
-            />
+            {isScanning && (
+              <QRCodeScanner 
+                onScanSuccess={handleScanSuccess}
+                isScanning={isScanning}
+                setIsScanning={setIsScanning}
+              />
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -122,11 +180,11 @@ const Index = () => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="gap-1" 
+                className="gap-1 text-gray-400 hover:text-white" 
                 onClick={resetScan}
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Scanner
+                Back to Home
               </Button>
             </div>
             
@@ -149,8 +207,8 @@ const Index = () => {
         )}
       </main>
       
-      <footer className="py-6 text-center text-sm text-muted-foreground">
-        <p>© 2025 Aura Scan Verification System</p>
+      <footer className="py-6 text-center text-sm text-gray-500">
+        <p>© 2025 AuraChain Identity Verification Platform</p>
       </footer>
       
       <Toaster />
