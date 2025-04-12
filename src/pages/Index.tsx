@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
@@ -9,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { decryptData } from '@/utils/crypto';
+import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
+  const { toast } = useToast();
   const [isScanning, setIsScanning] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [scannedAddress, setScannedAddress] = useState<string | null>(null);
@@ -30,14 +31,26 @@ const Index = () => {
     
     try {
       setScannedAddress(data);
-      setIsScanning(false);
+      // Keep isScanning true until we process the scanned data
+      // setIsScanning(false); - We'll let the QRCodeScanner component handle this
       
       // Attempt to verify and decrypt the data
       verifyWallet(data);
+      
+      toast({
+        title: "QR Code Detected",
+        description: "Processing wallet verification...",
+      });
     } catch (error) {
       console.error("Error processing QR code:", error);
       setVerificationError("Invalid QR code format. Please try again.");
       setIsVerifying(false);
+      
+      toast({
+        title: "Scan Error",
+        description: "Failed to process the QR code. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -52,6 +65,9 @@ const Index = () => {
       
       setTimeout(() => {
         try {
+          // Only after verification is complete, we'll stop the camera
+          setIsScanning(false);
+          
           // Simulate decryption of the wallet data
           // In production, use the actual decryptData function with proper key
           const decryptionKey = "your-secret-key"; // This would come from your secure backend
@@ -72,11 +88,22 @@ const Index = () => {
                 "Token Balance": "250 AURA"
               }
             });
+            
+            toast({
+              title: "Verification Successful",
+              description: "Wallet has been verified and authorized.",
+            });
           } else {
             setUserData({
               name: "Unknown User",
               walletAddress: "0x" + Math.random().toString(16).slice(2, 42),
               status: 'unauthorized'
+            });
+            
+            toast({
+              title: "Verification Failed",
+              description: "This wallet is not authorized.",
+              variant: "destructive",
             });
           }
           
@@ -85,12 +112,24 @@ const Index = () => {
           console.error("Decryption error:", error);
           setVerificationError("Failed to decrypt the data. Invalid format or encryption key.");
           setIsVerifying(false);
+          
+          toast({
+            title: "Decryption Error",
+            description: "Could not decrypt the QR code data.",
+            variant: "destructive",
+          });
         }
       }, 3000);
     } catch (error) {
       console.error("Verification error:", error);
       setVerificationError("Failed to verify the wallet address. Please try again.");
       setIsVerifying(false);
+      
+      toast({
+        title: "Verification Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -139,7 +178,10 @@ const Index = () => {
                 variant="ghost" 
                 size="sm" 
                 className="gap-1" 
-                onClick={resetScan}
+                onClick={() => {
+                  resetScan();
+                  setIsScanning(true); // Automatically start scanning again
+                }}
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Scanner

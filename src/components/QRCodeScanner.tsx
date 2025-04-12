@@ -17,6 +17,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [scannerReady, setScannerReady] = useState(false);
   const scanIntervalRef = useRef<number | null>(null);
+  const [qrDetected, setQrDetected] = useState(false);
 
   const startCamera = async () => {
     try {
@@ -61,7 +62,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
   };
 
   const scanQRCode = () => {
-    if (!canvasRef.current || !videoRef.current || !scannerReady) return;
+    if (!canvasRef.current || !videoRef.current || !scannerReady || qrDetected) return;
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -84,9 +85,10 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
       
       // For demo purposes we'll use a timeout to simulate successful detection
       setTimeout(() => {
-        if (Math.random() > 0.3 && isScanning) { // 70% chance of "successful" detection
+        if (Math.random() > 0.3 && isScanning && !qrDetected) { // 70% chance of "successful" detection
           // In a real implementation, this would be the encrypted data from the QR code
           const simulatedQRData = `AES256_${Math.random().toString(16).slice(2, 42)}`;
+          setQrDetected(true);
           onScanSuccess(simulatedQRData);
         }
       }, 2000);
@@ -96,7 +98,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
   };
 
   useEffect(() => {
-    if (isScanning && scannerReady) {
+    if (isScanning && scannerReady && !qrDetected) {
       // Start scanning
       scanIntervalRef.current = window.setInterval(scanQRCode, 500) as unknown as number;
     } else {
@@ -112,19 +114,20 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
         clearInterval(scanIntervalRef.current);
       }
     };
-  }, [isScanning, scannerReady]);
+  }, [isScanning, scannerReady, qrDetected]);
 
   useEffect(() => {
-    if (isScanning) {
+    if (isScanning && !qrDetected) {
       startCamera();
-    } else {
+    } else if (!isScanning || qrDetected) {
       stopCamera();
+      setQrDetected(false); // Reset for next scan when camera is turned off
     }
     
     return () => {
       stopCamera();
     };
-  }, [isScanning]);
+  }, [isScanning, qrDetected]);
 
   return (
     <Card className="w-full max-w-md mx-auto overflow-hidden glass-card">
