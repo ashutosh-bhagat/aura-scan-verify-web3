@@ -8,6 +8,7 @@ import WalletCard from '@/components/WalletCard';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { decryptData } from '@/utils/crypto';
 
 const Index = () => {
   const [isScanning, setIsScanning] = useState(false);
@@ -23,59 +24,74 @@ const Index = () => {
     };
   } | null>(null);
 
-  const handleScanSuccess = (data: string) => {
-    // Parse the QR code data (expected format: ethereum:0xAddress)
+  const handleScanSuccess = async (data: string) => {
+    // Parse the QR code data
     console.log("QR Scan result:", data);
     
-    let address = data;
-    if (data.startsWith('ethereum:')) {
-      address = data.substring(9);
+    try {
+      setScannedAddress(data);
+      setIsScanning(false);
+      
+      // Attempt to verify and decrypt the data
+      verifyWallet(data);
+    } catch (error) {
+      console.error("Error processing QR code:", error);
+      setVerificationError("Invalid QR code format. Please try again.");
+      setIsVerifying(false);
     }
-    
-    setScannedAddress(address);
-    setIsScanning(false);
-    
-    // Simulate verification process
-    verifyWallet(address);
   };
 
-  const verifyWallet = (address: string) => {
+  const verifyWallet = async (encryptedData: string) => {
     setIsVerifying(true);
     setVerificationError(null);
     
-    // Simulate API call to the backend
-    setTimeout(() => {
-      try {
-        // This is a simulation - in real app, make API call to your backend
-        const isAuthorized = Math.random() > 0.3; // 70% chance of success for demo
-        
-        if (isAuthorized) {
-          setUserData({
-            name: "Alex Blockchain",
-            walletAddress: address,
-            status: 'authorized',
-            additionalInfo: {
-              "Registration Date": "2023-11-15",
-              "Membership": "Gold",
-              "Event Access": "All Areas",
-              "Token Balance": "250 AURA"
-            }
-          });
-        } else {
-          setUserData({
-            name: "Unknown User",
-            walletAddress: address,
-            status: 'unauthorized'
-          });
+    try {
+      // This is where we would integrate the AES decryption
+      // In a real app, this would decrypt with a provided key or key from env
+      // For demo purposes, we're simulating decryption
+      
+      setTimeout(() => {
+        try {
+          // Simulate decryption of the wallet data
+          // In production, use the actual decryptData function with proper key
+          const decryptionKey = "your-secret-key"; // This would come from your secure backend
+          
+          // Simulate successful decryption and parsing
+          const isAuthorized = Math.random() > 0.3; // Simulate 70% success rate
+          
+          if (isAuthorized) {
+            // Simulate successfully decrypted data
+            setUserData({
+              name: "Alex Blockchain",
+              walletAddress: "0x" + Math.random().toString(16).slice(2, 42),
+              status: 'authorized',
+              additionalInfo: {
+                "Registration Date": "2023-11-15",
+                "Membership": "Gold",
+                "Event Access": "All Areas",
+                "Token Balance": "250 AURA"
+              }
+            });
+          } else {
+            setUserData({
+              name: "Unknown User",
+              walletAddress: "0x" + Math.random().toString(16).slice(2, 42),
+              status: 'unauthorized'
+            });
+          }
+          
+          setIsVerifying(false);
+        } catch (error) {
+          console.error("Decryption error:", error);
+          setVerificationError("Failed to decrypt the data. Invalid format or encryption key.");
+          setIsVerifying(false);
         }
-        
-        setIsVerifying(false);
-      } catch (error) {
-        console.error("Verification error:", error);
-        setVerificationError("Failed to verify the wallet address. Please try again.");
-        setIsVerifying(false);
-      }
-    }, 3000);
+      }, 3000);
+    } catch (error) {
+      console.error("Verification error:", error);
+      setVerificationError("Failed to verify the wallet address. Please try again.");
+      setIsVerifying(false);
+    }
   };
 
   const resetScan = () => {
@@ -86,7 +102,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background to-background/80 text-foreground">
       <Header />
       
       <main className="container px-4 py-8 max-w-4xl mx-auto">
@@ -97,7 +113,7 @@ const Index = () => {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold gradient-text mb-2">
+              <h1 className="text-3xl font-bold text-gradient mb-2">
                 Aura Scan Verification
               </h1>
               <p className="text-muted-foreground max-w-xl mx-auto">
@@ -142,7 +158,7 @@ const Index = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <WalletCard walletAddress={scannedAddress} />
+                <WalletCard walletAddress={userData.walletAddress} />
               </motion.div>
             )}
           </motion.div>

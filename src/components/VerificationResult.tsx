@@ -36,13 +36,13 @@ const VerificationResult: React.FC<VerificationResultProps> = ({
             Verifying QR Code
           </CardTitle>
           <CardDescription>
-            Please wait while we verify the wallet address...
+            Please wait while we decrypt and verify the data...
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Progress value={65} className="w-full" />
           <p className="text-sm text-muted-foreground text-center">
-            Connecting to blockchain network...
+            Decrypting secure data...
           </p>
         </CardContent>
       </Card>
@@ -81,19 +81,19 @@ const VerificationResult: React.FC<VerificationResultProps> = ({
       transition={{ duration: 0.5 }}
     >
       <Card className={`w-full max-w-md mx-auto glass-card ${
-        userData.status === 'authorized' ? 'border-aura-success/50' : 'border-aura-error/50'
+        userData.status === 'authorized' ? 'border-green-500/50' : 'border-red-500/50'
       }`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               {userData.status === 'authorized' ? (
                 <>
-                  <CheckCircle className="h-5 w-5 text-aura-success" />
+                  <CheckCircle className="h-5 w-5 text-green-500" />
                   <span>Verification Successful</span>
                 </>
               ) : (
                 <>
-                  <XCircle className="h-5 w-5 text-aura-error" />
+                  <XCircle className="h-5 w-5 text-red-500" />
                   <span>Verification Failed</span>
                 </>
               )}
@@ -104,8 +104,8 @@ const VerificationResult: React.FC<VerificationResultProps> = ({
           </div>
           <CardDescription>
             {userData.status === 'authorized' 
-              ? 'The wallet address has been successfully verified.' 
-              : 'This wallet address is not authorized.'}
+              ? 'The encrypted data has been successfully verified and decrypted.' 
+              : 'The encrypted data verification failed.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

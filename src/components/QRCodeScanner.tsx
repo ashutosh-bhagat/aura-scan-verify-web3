@@ -85,7 +85,8 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, isScanning
       // For demo purposes we'll use a timeout to simulate successful detection
       setTimeout(() => {
         if (Math.random() > 0.3 && isScanning) { // 70% chance of "successful" detection
-          const simulatedQRData = `ethereum:0x${Math.random().toString(16).slice(2, 42)}`;
+          // In a real implementation, this would be the encrypted data from the QR code
+          const simulatedQRData = `AES256_${Math.random().toString(16).slice(2, 42)}`;
           onScanSuccess(simulatedQRData);
         }
       }, 2000);
