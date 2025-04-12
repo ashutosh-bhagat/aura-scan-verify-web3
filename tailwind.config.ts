@@ -64,17 +64,13 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				aura: {
-					'purple': '#8A5CF6',
-					'blue': '#3B82F6',
+					'purple': '#8A2BE2',
+					'blue': '#4169E1',
 					'light': '#F0F8FF',
-					'dark': '#0B0C15',
-					'darker': '#070811',
-					'card': '#111322',
-					'card-border': '#1F2036',
+					'dark': '#1a1a2e',
 					'success': '#10B981',
 					'error': '#EF4444',
 					'warning': '#F59E0B',
-					'purple-accent': '#9B87F5',
 				}
 			},
 			borderRadius: {
